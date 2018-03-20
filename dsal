@@ -91,6 +91,8 @@ function init {
 
 	importDb
 
+	restorePermissions
+
 }
 
 function createConfigFile {
