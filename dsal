@@ -41,6 +41,9 @@ function init {
 
 	read -p "Project Name (lowercase/no-spaces): " PROJECTNAME
 	read -p "Doc Root (docroot): " DOCROOT
+	if [ -z "$DOCROOT" ]; then
+		DOCROOT="docroot"
+	fi
 	echo ""
 
 	echo -e "${BLUE}Downloading n98...${NC}"
