@@ -1,0 +1,284 @@
+#!/bin/bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+if [ -z $(eval command -v docker) ]; then
+	echo "Docker is not installed"
+	exit 1
+fi
+
+if [ -z $(eval command -v fin) ]; then
+	echo "Docksal is not installed"
+	exit 1
+fi
+
+
+
+######################################################
+####		 Functions
+######################################################
+
+function init {
+
+	read -p "Magento Version [1 or 2]: " MVERSION
+	if [ -z "$MVERSION" ]; then
+		MVERSION="2"
+		echo "Selected Magento 2";
+	fi
+
+	read -p "Magento Type [ce/ee]: " MAGE_TYPE
+	if [ -z "$MAGE_TYPE" ]; then
+		MAGE_TYPE="ce"
+	fi
+	if [ "$MAGE_TYPE" = "ee" ]; then
+		REPO_M2="--repository-url=https://repo.magento.com/ magento/project-enterprise-edition"
+	else
+		REPO_M2="magento/community-edition"
+	fi
+
+	read -p "Project Name (lowercase/no-spaces): " PROJECTNAME
+	read -p "Doc Root (docroot): " DOCROOT
+	echo ""
+
+	echo -e "${BLUE}Downloading n98...${NC}"
+	curl -O https://files.magerun.net/n98-magerun2.phar &> /dev/null
+	mv n98-magerun2.phar ${DOCROOT}/n98-magerun2.phar
+	echo -e "${GREEN}n98 downloaded!${NC}"
+	echo ""
+
+	BASEURL=${PROJECTNAME}.docksal
+
+	echo -e "${BLUE}Downloading Docksal...${NC}"
+	rm -rf .docksal &> /dev/null
+	git clone https://github.com/docksal/magento _docksal-magento &> /dev/null
+	cp -rf _docksal-magento/.docksal .  &> /dev/null
+	rm -rf _docksal-magento &> /dev/null
+	echo -e "${GREEN}Docksal downloaded!${NC}"
+	echo ""
+
+	echo -e "${BLUE}Setting Docksal config...${NC}"
+	# if is mac
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+    	sed -i "" "s~VIRTUAL_HOST=magento.docksal~VIRTUAL_HOST=${BASEURL}~1" .docksal/docksal.env
+    	sed -i "" "s~DOCROOT=docroot~DOCROOT=${DOCROOT}~1" .docksal/docksal.env
+
+    	if [ "$MVERSION" -eq "1" ]; then
+    		sed -i "" "s~CLI_IMAGE='docksal/cli:2.0-php7.1'~CLI_IMAGE='docksal/cli:2.0-php5.6'~1" .docksal/docksal.env
+    	fi
+	else
+		sed -i "s~VIRTUAL_HOST=magento.docksal~VIRTUAL_HOST=${BASEURL}~1" .docksal/docksal.env
+		sed -i "s~DOCROOT=docroot~DOCROOT=${DOCROOT}~1" .docksal/docksal.env
+
+		if [ "$MVERSION" -eq "1" ]; then
+    		sed -i "s~CLI_IMAGE='docksal/cli:2.0-php7.1'~CLI_IMAGE='docksal/cli:2.0-php5.6'~1" .docksal/docksal.env
+    	fi
+	fi
+	echo -e "${GREEN}Config updated!${NC}"
+	echo ""
+
+	fin up
+
+	importDb
+
+}
+
+function createConfigFile {
+
+	echo -e "${BLUE}\nDownloading config file...${NC}"
+	echo -e ""
+	read -p "Crypt [783eee839c0396cf398e07e218e89e0a]: " CRYPT
+	if [ -z $CRYPT ]; then
+		CRYPT="783eee839c0396cf398e07e218e89e0a"
+	fi
+
+	read -p "Table Prefix: " TABLE_PREFIX
+	if [ -z $TABLE_PREFIX ]; then
+		TABLE_PREFIX=""
+	fi
+
+	read -p "Backend Frontname [backend]: " BACKEND_FRONTNAME
+	if [ -z $BACKEND_FRONTNAME ]; then
+		BACKEND_FRONTNAME="backend"
+	fi
+
+	if [ "$MVERSION" -eq "2" ]; then
+		CONFIG_FILE=$DOCROOT/app/etc/env.php
+		curl -k https://raw.githubusercontent.com/fsspencer/docksal-dsal/master/config/m2/${MAGE_TYPE}/env.php > $CONFIG_FILE
+	else
+		CONFIG_FILE=$PROJECT_PATH/app/etc/local.xml
+		curl -k https://raw.githubusercontent.com/fsspencer/dockerize-magento/master/config/m1/local.xml.sample > $CONFIG_FILE
+	fi
+
+	replaceConfigValues
+	echo -e "${GREEN}Magento config updated!${NC}"
+	echo ""
+
+	rm -rf $PROJECT_PATH/var/cache/*
+}
+
+function replaceConfigValues {
+
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		sed -i '' "s/CRYPT/${CRYPT}/1" $CONFIG_FILE
+		sed -i '' "s/TBL_PREFIX/${TABLE_PREFIX}/1" $CONFIG_FILE
+		sed -i '' "s/DB_HOST/db/1" $CONFIG_FILE
+		sed -i '' "s/DB_USER/root/1" $CONFIG_FILE
+		sed -i '' "s/DB_PASSWORD/root/1" $CONFIG_FILE
+		sed -i '' "s/DB_NAME/default/1" $CONFIG_FILE
+		sed -i '' "s/BACKEND_FRONTNAME/backend/1" $CONFIG_FILE
+	else
+		sed -i "s/CRYPT/${CRYPT}/1" $CONFIG_FILE
+		sed -i "s/TBL_PREFIX/${TABLE_PREFIX}/1" $CONFIG_FILE
+		sed -i "s/DB_HOST/db/1" $CONFIG_FILE
+		sed -i "s/DB_USER/root/1" $CONFIG_FILE
+		sed -i "s/DB_PASSWORD/root/1" $CONFIG_FILE
+		sed -i "s/DB_NAME/default/1" $CONFIG_FILE
+		sed -i "s/BACKEND_FRONTNAME/backend/1" $CONFIG_FILE
+	fi
+}
+
+
+function importDb {
+	createConfigFile
+	read -p "Import database? [Y/n]: " IMPORTDB
+	if [ "$IMPORTDB" = "Y" ] || [ "$IMPORTDB" = "y" ]; then
+		read -p "SQL Filename?: " SQLNAME
+		echo ""
+
+		fin sqli $SQLNAME
+		echo ""
+
+		setDbValues
+		createAdminUser
+	fi
+}
+
+function setDbValues {
+	echo -e "${BLUE}\nSetting DB values...${NC}"
+	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set web/unsecure/base_url http://${BASEURL}/"
+	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set web/secure/base_url http://${BASEURL}/"
+	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set web/cookie/cookie_domain ${BASEURL}"
+	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/js/merge_files 0"
+	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/js/enable_js_bundling 0"
+	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/js/minify_files 0"
+	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/css/merge_css_files 0"
+	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/css/minify_files 0"
+	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/static/sign 0"
+	echo -e "${GREEN}Magento DB values updated!${NC}"
+	echo ""
+
+	fin exec "cd /var/www/${DOCROOT}; php bin/magento setup:upgrade"
+	fin exec "cd /var/www/${DOCROOT}; php bin/magento cache:clean"
+	echo ""
+}
+
+function createAdminUser {
+	read -p "Create Admin User? [Y/n]: " CREATE_ADMINUSER
+	if [ "$CREATE_ADMINUSER" = "Y" ] || [ "$CREATE_ADMINUSER" = "y" ]; then
+		read -p "Admin Username: " ADMIN_USERNAME
+		read -p "Admin Password: " ADMIN_PASSWORD
+		fin exec "php /var/www/${DOCROOT}/bin/magento admin:user:create --admin-user='${ADMIN_USERNAME}' --admin-firstname='Admin' --admin-lastname='Web' --admin-email='admin@sample.com' --admin-password='${ADMIN_PASSWORD}' "
+	fi
+}
+
+function setup {
+	if [ -z $(eval command -v git) ]; then
+		echo "${RED}GIT is not installed${NC}"
+		exit 1
+	fi	
+
+	mkdir -p ~/.dsal/bin
+
+	if [ -f ~/.dsal/bin/dsal ]; then
+		rm -rf ~/.dsal/bin		
+		rm /usr/local/bin/dsal
+	fi
+	git clone https://github.com/fsspencer/docksal-dsal ~/.dsal/bin &> /dev/null
+	ln -s ~/.dsal/bin/dsal /usr/local/bin/dsal
+
+	echo -e "${GREEN}DSAL installed properly. Now you can use it as 'dsal' in your terminal${NC}"
+}
+
+
+function outputData {
+	echo -e "${GREEN}-------------------------------------${NC}"
+	echo -e "${GREEN}\nBase URL: http://${BASEURL}${NC}"
+	echo -e "${GREEN}-------------------------------------${NC}"
+}
+
+
+function usage {
+  echo -e "Usage:\n\n  $SCRIPTNAME <action> <arguments...>"
+  echo -e ""
+  echo -e "Project:"
+  echo -e " " "${GREEN}init${NC}" "\t\t" "Initialize new/existing Magento project"
+  echo -e ""
+  echo -e "Utilities:"
+  echo -e " " "${GREEN}php${NC}" "\t\t" "Executes php cli within your project root"
+  echo -e " " "${GREEN}composer${NC}" "\t\t" "Executes composer within your project root"
+  echo -e " " "${GREEN}npm${NC}" "\t\t" "Executes npm within your project root"
+  echo -e " " "${GREEN}n98${NC}" "\t\t" "Executes n98-magerun within your project root"
+  echo -e " " "${GREEN}magento${NC}" "\t\t" "Executes Magento 2 command line tool (e.g: dsal magento setup:upgrade)"
+  echo -e ""
+  echo -e "System:"
+  echo -e " " "${GREEN}setup${NC}" "\t\t" "Installs dsal command locally on your computer"
+  echo -e " " "${GREEN}self-update${NC}" "\t\t" "Updates dsal locally on your computer"
+  echo -e ""
+  echo ""
+}
+
+######################################################
+####		 User Interaction
+######################################################
+
+
+case "$1" in
+    init)
+    shift 1
+    init
+    outputData
+    exit 0
+    ;;
+
+    php)
+    shift 1
+    checkIsRunning
+    fin exec "cd /var/www/${DOCROOT}; php $* "
+    ;;
+
+    composer)
+    shift 1
+    checkIsRunning
+    fin exec "cd /var/www/${DOCROOT}; composer $* "
+    ;;
+
+    n98)
+    shift 1
+    checkIsRunning
+    fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar $* "
+    ;;
+
+    magento)
+    shift 1
+    checkIsRunning
+    fin exec "cd /var/www/${DOCROOT}; php bin/magento $* "
+    ;;
+
+    setup)
+    setup
+    ;;
+
+    self-update)
+	echo -e "${BLUE}Fetching latest version...${NC}"
+    setup
+    ;;
+
+    *)
+    usage
+    ;;
+esac
+
+exit 0
