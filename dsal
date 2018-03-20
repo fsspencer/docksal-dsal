@@ -44,8 +44,13 @@ function init {
 	echo ""
 
 	echo -e "${BLUE}Downloading n98...${NC}"
-	curl -O https://files.magerun.net/n98-magerun2.phar &> /dev/null
-	mv n98-magerun2.phar ${DOCROOT}/n98-magerun2.phar
+	if [ "$MVERSION" -eq "2" ]; then
+		curl -O https://files.magerun.net/n98-magerun2.phar &> /dev/null
+		mv n98-magerun2.phar ${DOCROOT}/n98
+	else
+		curl -O https://files.magerun.net/n98-magerun.phar &> /dev/null
+		mv n98-magerun.phar ${DOCROOT}/n98
+	fi
 	echo -e "${GREEN}n98 downloaded!${NC}"
 	echo ""
 
@@ -158,21 +163,30 @@ function importDb {
 
 function setDbValues {
 	echo -e "${BLUE}\nSetting DB values...${NC}"
-	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set web/unsecure/base_url http://${BASEURL}/"
-	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set web/secure/base_url http://${BASEURL}/"
-	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set web/cookie/cookie_domain ${BASEURL}"
-	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/js/merge_files 0"
-	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/js/enable_js_bundling 0"
-	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/js/minify_files 0"
-	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/css/merge_css_files 0"
-	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/css/minify_files 0"
-	fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar config:store:set dev/static/sign 0"
+	if [ "$MVERSION" -eq "2" ]; then
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/unsecure/base_url http://${BASEURL}/"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/base_url http://${BASEURL}/"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/cookie/cookie_domain ${BASEURL}"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/js/merge_files 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/js/enable_js_bundling 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/js/minify_files 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/css/merge_css_files 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/css/minify_files 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/static/sign 0"
+		
+		fin exec "cd /var/www/${DOCROOT}; php bin/magento setup:upgrade"
+		fin exec "cd /var/www/${DOCROOT}; php bin/magento cache:clean"
+	else
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:set web/unsecure/base_url http://${BASE_URL}/"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:set web/secure/base_url http://${BASE_URL}/"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:set web/cookie/cookie_domain $BASEURL"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:set dev/js/merge_files 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:set dev/css/merge_css_files 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 cache:clean"
+	fi
 	echo -e "${GREEN}Magento DB values updated!${NC}"
 	echo ""
 
-	fin exec "cd /var/www/${DOCROOT}; php bin/magento setup:upgrade"
-	fin exec "cd /var/www/${DOCROOT}; php bin/magento cache:clean"
-	echo ""
 }
 
 function createAdminUser {
@@ -258,7 +272,7 @@ case "$1" in
     n98)
     shift 1
     checkIsRunning
-    fin exec "cd /var/www/${DOCROOT}; php n98-magerun2.phar $* "
+    fin exec "cd /var/www/${DOCROOT}; php n98 $* "
     ;;
 
     magento)
