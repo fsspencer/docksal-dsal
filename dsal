@@ -113,8 +113,8 @@ function createConfigFile {
 		CONFIG_FILE=$DOCROOT/app/etc/env.php
 		curl -k https://raw.githubusercontent.com/fsspencer/docksal-dsal/master/config/m2/${MAGE_TYPE}/env.php > $CONFIG_FILE
 	else
-		CONFIG_FILE=$PROJECT_PATH/app/etc/local.xml
-		curl -k https://raw.githubusercontent.com/fsspencer/dockerize-magento/master/config/m1/local.xml.sample > $CONFIG_FILE
+		CONFIG_FILE=$DOCROOT/app/etc/local.xml
+		curl -k https://raw.githubusercontent.com/fsspencer/docksal-dsal/master/config/m1/local.xml.sample > $CONFIG_FILE
 	fi
 
 	replaceConfigValues
