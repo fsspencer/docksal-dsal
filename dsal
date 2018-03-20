@@ -201,6 +201,14 @@ function createAdminUser {
 	fi
 }
 
+function restorePermissions {
+	echo -e "${BLUE}\nSetting up permissions...${NC}"
+	fin bash 'cd /var/www ; sudo chmod -R 755 ${DOCROOT}'
+	fin bash 'cd /var/www/${DOCROOT} ;  find . -type f -exec chmod 644 {} \; ; find . -type d -exec chmod 755 {} \; '
+	echo -e "${GREEN}Permissions restored!${NC}"
+	echo ""
+}
+
 function setup {
 	if [ -z $(eval command -v git) ]; then
 		echo "${RED}GIT is not installed${NC}"
@@ -243,6 +251,7 @@ function usage {
   echo -e "System:"
   echo -e " " "${GREEN}setup${NC}" "\t" "Installs dsal command locally on your computer"
   echo -e " " "${GREEN}self-update${NC}" "\t" "Updates dsal locally on your computer"
+  echo -e " " "${GREEN}permissions${NC}" "\t" "Restore file system permissions"
   echo -e ""
   echo ""
 }
@@ -291,6 +300,10 @@ case "$1" in
     self-update)
 	echo -e "${BLUE}Fetching latest version...${NC}"
     setup
+    ;;
+
+    permissions)
+    restorePermissions
     ;;
 
     *)
