@@ -59,13 +59,14 @@ function init {
 
 	BASEURL=${PROJECTNAME}.docksal
 
-	echo -e "${BLUE}Downloading Docksal...${NC}"
-	rm -rf .docksal &> /dev/null
-	git clone https://github.com/docksal/magento _docksal-magento &> /dev/null
-	cp -rf _docksal-magento/.docksal .  &> /dev/null
-	rm -rf _docksal-magento &> /dev/null
-	echo -e "${GREEN}Docksal downloaded!${NC}"
-	echo ""
+	if [ ! -d ".docksal" ]; then
+		echo -e "${BLUE}Downloading Docksal...${NC}"
+		git clone https://github.com/docksal/magento _docksal-magento &> /dev/null
+		cp -rf _docksal-magento/.docksal .  &> /dev/null
+		rm -rf _docksal-magento &> /dev/null
+		echo -e "${GREEN}Docksal downloaded!${NC}"
+		echo ""
+	fi
 
 	echo -e "${BLUE}Setting Docksal config...${NC}"
 	# if is mac
