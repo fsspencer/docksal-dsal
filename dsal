@@ -89,6 +89,8 @@ function init {
 
 	fin up
 
+	fin exec "cd /var/www/${DOCROOT}; composer install"
+
 	importDb
 
 	restorePermissions
@@ -195,11 +197,13 @@ function setDbValues {
 }
 
 function createAdminUser {
-	read -p "Create Admin User? [Y/n]: " CREATE_ADMINUSER
-	if [ "$CREATE_ADMINUSER" = "Y" ] || [ "$CREATE_ADMINUSER" = "y" ]; then
-		read -p "Admin Username: " ADMIN_USERNAME
-		read -p "Admin Password: " ADMIN_PASSWORD
-		fin exec "php /var/www/${DOCROOT}/bin/magento admin:user:create --admin-user='${ADMIN_USERNAME}' --admin-firstname='Admin' --admin-lastname='Web' --admin-email='admin@sample.com' --admin-password='${ADMIN_PASSWORD}' "
+	if [ "$MVERSION" -eq "2" ]; then
+		read -p "Create Admin User? [Y/n]: " CREATE_ADMINUSER
+		if [ "$CREATE_ADMINUSER" = "Y" ] || [ "$CREATE_ADMINUSER" = "y" ]; then
+			read -p "Admin Username: " ADMIN_USERNAME
+			read -p "Admin Password: " ADMIN_PASSWORD
+			fin exec "php /var/www/${DOCROOT}/bin/magento admin:user:create --admin-user='${ADMIN_USERNAME}' --admin-firstname='Admin' --admin-lastname='Web' --admin-email='admin@sample.com' --admin-password='${ADMIN_PASSWORD}' "
+		fi
 	fi
 }
 
