@@ -187,7 +187,7 @@ function setDbValues {
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:set web/cookie/cookie_domain $BASEURL"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:set dev/js/merge_files 0"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:set dev/css/merge_css_files 0"
-		fin exec "cd /var/www/${DOCROOT}; php n98 cache:clean"
+		fin exec "cd /var/www/${DOCROOT}; rm -rf var/cache/*"
 	fi
 	echo -e "${GREEN}Magento DB values updated!${NC}"
 	echo ""
@@ -205,8 +205,8 @@ function createAdminUser {
 
 function restorePermissions {
 	echo -e "${BLUE}\nSetting up permissions...${NC}"
-	fin bash 'cd /var/www ; sudo chmod -R 755 ${DOCROOT}'
-	fin bash 'cd /var/www/${DOCROOT} ;  find . -type f -exec chmod 644 {} \; ; find . -type d -exec chmod 755 {} \; '
+	fin bash "cd /var/www ; sudo chmod -R 755 ${DOCROOT}"
+	fin bash "cd /var/www/${DOCROOT} ;  find . -type f -exec chmod 644 {} \; ; find . -type d -exec chmod 755 {} \; "
 	echo -e "${GREEN}Permissions restored!${NC}"
 	echo ""
 }
@@ -232,7 +232,7 @@ function setup {
 
 function outputData {
 	echo -e "${GREEN}-------------------------------------${NC}"
-	echo -e "${GREEN}\nBase URL: http://${BASEURL}${NC}"
+	echo -e "${GREEN}Base URL: http://${BASEURL}${NC}"
 	echo -e "${GREEN}-------------------------------------${NC}"
 }
 
