@@ -89,7 +89,9 @@ function init {
 
 	fin up
 
-	fin exec "cd /var/www/${DOCROOT}; composer install"
+	if [ "$MVERSION" -eq "2" ]; then
+		fin exec "cd /var/www/${DOCROOT}; composer install"
+	fi
 
 	importDb
 
