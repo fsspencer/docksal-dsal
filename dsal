@@ -182,8 +182,8 @@ function setDbValues {
 		fin exec "cd /var/www/${DOCROOT}; php bin/magento setup:upgrade"
 		fin exec "cd /var/www/${DOCROOT}; php bin/magento cache:clean"
 	else
-		fin exec "cd /var/www/${DOCROOT}; php n98 config:set web/unsecure/base_url http://${BASE_URL}/"
-		fin exec "cd /var/www/${DOCROOT}; php n98 config:set web/secure/base_url http://${BASE_URL}/"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:set web/unsecure/base_url http://${BASEURL}/"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:set web/secure/base_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:set web/cookie/cookie_domain $BASEURL"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:set dev/js/merge_files 0"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:set dev/css/merge_css_files 0"
