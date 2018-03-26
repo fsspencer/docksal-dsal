@@ -257,6 +257,9 @@ function usage {
   echo -e " " "${GREEN}n98${NC}" "\t\t" "Executes n98-magerun within your project root"
   echo -e " " "${GREEN}magento${NC}" "\t" "Executes Magento 2 command line tool (e.g: dsal magento setup:upgrade)"
   echo -e ""
+  echo -e "Magento Actions:"
+  echo -e " " "${GREEN}static:clean${NC}" "\t\t" "Cleans the Magento static-content (only M2)"
+  echo -e ""
   echo -e "System:"
   echo -e " " "${GREEN}setup${NC}" "\t" "Installs dsal command locally on your computer"
   echo -e " " "${GREEN}self-update${NC}" "\t" "Updates dsal locally on your computer"
@@ -300,6 +303,13 @@ case "$1" in
     shift 1
     checkIsRunning
     fin exec "cd /var/www/${DOCROOT}; php bin/magento $* "
+    ;;
+
+    static:clean)
+    shift 1
+    if [ -f bin/magento ]; then
+    	fin exec "rm -rf  ./generated var/cache var/generation var/view_preprocessed pub/static/*"
+    fi
     ;;
 
     setup)

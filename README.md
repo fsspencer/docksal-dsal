@@ -40,6 +40,8 @@ Actions:
 | **n98** | *Executes n98-magerun within your project root* |
 | **magento** | *Executes Magento 2 command line tool (e.g: dsal magento setup:upgrade)* |
 ||
+| **static:clean** | *Cleans static-content (only for M2)* |
+||
 | **setup** | *Installs dsal command locally on your computer* |
 | **self-update** | *Updates dsal locally on your computer* |
 | **permissions** | *Resote magento file system permissions* |
