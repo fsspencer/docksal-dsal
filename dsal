@@ -39,25 +39,11 @@ function init {
 		REPO_M2="magento/community-edition"
 	fi
 
-	read -p "Project Name (lowercase/no-spaces): " PROJECTNAME
-	read -p "Doc Root (docroot): " DOCROOT
-	if [ -z "$DOCROOT" ]; then
-		DOCROOT="docroot"
-	fi
-	echo ""
+	askProjectName
+	
+	askDocroot
 
-	echo -e "${BLUE}Downloading n98...${NC}"
-	if [ "$MVERSION" -eq "2" ]; then
-		curl -O https://files.magerun.net/n98-magerun2.phar &> /dev/null
-		mv n98-magerun2.phar ${DOCROOT}/n98
-	else
-		curl -O https://files.magerun.net/n98-magerun.phar &> /dev/null
-		mv n98-magerun.phar ${DOCROOT}/n98
-	fi
-	echo -e "${GREEN}n98 downloaded!${NC}"
-	echo ""
-
-	BASEURL=${PROJECTNAME}.docksal
+	downloadN98
 
 	if [ ! -d ".docksal" ]; then
 		echo -e "${BLUE}Downloading Docksal...${NC}"
@@ -98,6 +84,32 @@ function init {
 
 	restorePermissions
 
+}
+
+function askProjectName {
+	read -p "Project Name (lowercase/no-spaces): " PROJECTNAME
+	BASEURL=${PROJECTNAME}.docksal
+}
+
+function askDocroot {
+	read -p "Doc Root (docroot): " DOCROOT
+	if [ -z "$DOCROOT" ]; then
+		DOCROOT="docroot"
+	fi
+	echo ""
+}
+
+function downloadN98 {
+	echo -e "${BLUE}Downloading n98...${NC}"
+	if [ -f ${DOCROOT}/bin/magento ]; then
+		curl -O https://files.magerun.net/n98-magerun2.phar &> /dev/null
+		mv n98-magerun2.phar ${DOCROOT}/n98
+	else
+		curl -O https://files.magerun.net/n98-magerun.phar &> /dev/null
+		mv n98-magerun.phar ${DOCROOT}/n98
+	fi
+	echo -e "${GREEN}n98 downloaded!${NC}"
+	echo ""
 }
 
 function createConfigFile {
@@ -173,7 +185,7 @@ function importDb {
 
 function setDbValues {
 	echo -e "${BLUE}\nSetting DB values...${NC}"
-	if [ "$MVERSION" -eq "2" ]; then
+	if [ -f ${DOCROOT}/bin/magento ]; then
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/unsecure/base_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/base_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/cookie/cookie_domain ${BASEURL}"
@@ -196,7 +208,6 @@ function setDbValues {
 	fi
 	echo -e "${GREEN}Magento DB values updated!${NC}"
 	echo ""
-
 }
 
 function createAdminUser {
@@ -258,7 +269,8 @@ function usage {
   echo -e " " "${GREEN}magento${NC}" "\t" "Executes Magento 2 command line tool (e.g: dsal magento setup:upgrade)"
   echo -e ""
   echo -e "Magento Actions:"
-  echo -e " " "${GREEN}static:clean${NC}" "\t\t" "Cleans the Magento static-content (only M2)"
+  echo -e " " "${GREEN}static:clean${NC}" "\t" "Cleans the Magento static-content (only M2)"
+  echo -e " " "${GREEN}config:url${NC}" "\t" "Set the Store URL and prepare the project for development"
   echo -e ""
   echo -e "System:"
   echo -e " " "${GREEN}setup${NC}" "\t" "Installs dsal command locally on your computer"
@@ -310,6 +322,18 @@ case "$1" in
     if [ -f bin/magento ]; then
     	fin exec "rm -rf  ./generated var/cache var/generation var/view_preprocessed pub/static/*"
     fi
+    ;;
+
+    config:url)
+    shift 1
+    
+    askProjectName
+    askDocroot
+
+    if [ ! -f ${DOCROOT}/n98 ]; then
+		downloadN98
+	fi
+    setDbValues
     ;;
 
     setup)

@@ -41,6 +41,7 @@ Actions:
 | **magento** | *Executes Magento 2 command line tool (e.g: dsal magento setup:upgrade)* |
 ||
 | **static:clean** | *Cleans static-content (only for M2)* |
+| **config:url** | *Set the store URL and prepare the project for development* |
 ||
 | **setup** | *Installs dsal command locally on your computer* |
 | **self-update** | *Updates dsal locally on your computer* |
