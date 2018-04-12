@@ -59,6 +59,7 @@ function init {
     if [[ "$OSTYPE" == "darwin"* ]]; then
     	sed -i "" "s~VIRTUAL_HOST=magento.docksal~VIRTUAL_HOST=${BASEURL}~1" .docksal/docksal.env
     	sed -i "" "s~DOCROOT=docroot~DOCROOT=${DOCROOT}~1" .docksal/docksal.env
+    	sed -i "" "s~0:3306~33061:3306~1" .docksal/docksal.env
 
     	if [ "$MVERSION" -eq "1" ]; then
     		sed -i "" "s~CLI_IMAGE='docksal/cli:2.0-php7.1'~CLI_IMAGE='docksal/cli:2.0-php5.6'~1" .docksal/docksal.env
@@ -66,6 +67,7 @@ function init {
 	else
 		sed -i "s~VIRTUAL_HOST=magento.docksal~VIRTUAL_HOST=${BASEURL}~1" .docksal/docksal.env
 		sed -i "s~DOCROOT=docroot~DOCROOT=${DOCROOT}~1" .docksal/docksal.env
+		sed -i "s~0:3306~33061:3306~1" .docksal/docksal.env
 
 		if [ "$MVERSION" -eq "1" ]; then
     		sed -i "s~CLI_IMAGE='docksal/cli:2.0-php7.1'~CLI_IMAGE='docksal/cli:2.0-php5.6'~1" .docksal/docksal.env
