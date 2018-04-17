@@ -218,6 +218,8 @@ function createAdminUser {
 		if [ "$CREATE_ADMINUSER" = "Y" ] || [ "$CREATE_ADMINUSER" = "y" ]; then
 			read -p "Admin Username: " ADMIN_USERNAME
 			read -p "Admin Password: " ADMIN_PASSWORD
+			fin db cli --db=default "REPLACE INTO authorization_role (role_id, parent_id, tree_level, sort_order, role_type, user_id, user_type, role_name) VALUES (1, 0, 1, 1, 'G', 0, '2', 'Administrators');"
+			fin db cli --db=default "REPLACE INTO authorization_rule (rule_id, role_id, resource_id, privileges, permission) VALUES (1, 1, 'Magento_Backend::all', NULL, 'allow');"
 			fin exec "php /var/www/${DOCROOT}/bin/magento admin:user:create --admin-user='${ADMIN_USERNAME}' --admin-firstname='Admin' --admin-lastname='Web' --admin-email='admin@sample.com' --admin-password='${ADMIN_PASSWORD}' "
 		fi
 	fi
