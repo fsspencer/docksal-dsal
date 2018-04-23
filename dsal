@@ -280,6 +280,8 @@ function usage {
   echo -e " " "${GREEN}setup${NC}" "\t" "Installs dsal command locally on your computer"
   echo -e " " "${GREEN}self-update${NC}" "\t" "Updates dsal locally on your computer"
   echo -e " " "${GREEN}permissions${NC}" "\t" "Restore file system permissions"
+  echo -e " " "${GREEN}xdebug:enable${NC}" "\t" "Enable xDebug"
+  echo -e " " "${GREEN}xdebug:disable${NC}" "\t" "Disable xDebug"
   echo -e ""
   echo ""
 }
@@ -351,6 +353,24 @@ case "$1" in
 
     permissions)
     restorePermissions
+    ;;
+
+    xdebug:enable)
+	# if is mac
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+    	sed -i "" "s~XDEBUG_ENABLED=0~XDEBUG_ENABLED=1~1" .docksal/docksal.env
+	else
+		sed -i "s~XDEBUG_ENABLED=0~XDEBUG_ENABLED=1~1" .docksal/docksal.env
+	fi
+    ;;
+
+    xdebug:disable)
+    # if is mac
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+    	sed -i "" "s~XDEBUG_ENABLED=1~XDEBUG_ENABLED=0~1" .docksal/docksal.env
+	else
+		sed -i "s~XDEBUG_ENABLED=1~XDEBUG_ENABLED=0~1" .docksal/docksal.env
+	fi
     ;;
 
     *)
