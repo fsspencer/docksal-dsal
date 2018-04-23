@@ -362,6 +362,7 @@ case "$1" in
 	else
 		sed -i "s~XDEBUG_ENABLED=0~XDEBUG_ENABLED=1~1" .docksal/docksal.env
 	fi
+	fin restart
 	echo -e "${GREEN}xDebug enabled!${NC}"
     ;;
 
@@ -372,6 +373,7 @@ case "$1" in
 	else
 		sed -i "s~XDEBUG_ENABLED=1~XDEBUG_ENABLED=0~1" .docksal/docksal.env
 	fi
+	fin restart
 	echo -e "${GREEN}xDebug disabled!${NC}"
     ;;
 
