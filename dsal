@@ -63,6 +63,8 @@ function init {
 
     	if [ "$MVERSION" -eq "1" ]; then
     		sed -i "" "s~CLI_IMAGE='docksal/cli:2.0-php7.1'~CLI_IMAGE='docksal/cli:2.0-php5.6'~1" .docksal/docksal.env
+		else
+			sed -i "" "s~CLI_IMAGE='docksal/cli:2.0-php7.1'~CLI_IMAGE='docksal/cli:2.0-php7.0'~1" .docksal/docksal.env
     	fi
 	else
 		sed -i "s~VIRTUAL_HOST=magento.docksal~VIRTUAL_HOST=${BASEURL}~1" .docksal/docksal.env
@@ -71,6 +73,8 @@ function init {
 
 		if [ "$MVERSION" -eq "1" ]; then
     		sed -i "s~CLI_IMAGE='docksal/cli:2.0-php7.1'~CLI_IMAGE='docksal/cli:2.0-php5.6'~1" .docksal/docksal.env
+		else
+			sed -i "s~CLI_IMAGE='docksal/cli:2.0-php7.1'~CLI_IMAGE='docksal/cli:2.0-php7.0'~1" .docksal/docksal.env
     	fi
 	fi
 	echo -e "${GREEN}Config updated!${NC}"
