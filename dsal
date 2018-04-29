@@ -293,6 +293,50 @@ function setup {
 	echo -e "${GREEN}DSAL installed properly. Now you can use it as 'dsal' in your terminal${NC}"
 }
 
+function clearCache {
+	if [ -d "./bin/magento" ] || [ -d "./app/Mage.php" ]; then
+    	echo -e "${RED}The current directory is not a Magento project${NC}"
+    	exit 1
+    fi
+
+    if [ -d "./var/cache" ]; then
+    	find ./var/cache/ -type f -not -name '.htaccess' -delete
+    	find ./var/cache/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/cache cleared!${NC}"
+
+    fi
+    
+    if [ -d "./var/page_cache" ]; then
+    	find ./var/page_cache/ -type f -not -name '.htaccess' -delete
+    	find ./var/page_cache/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/page_cache cleared!${NC}"
+    fi
+    
+    if [ -d "./var/generation" ]; then
+    	find ./var/generation/ -type f -not -name '.htaccess' -delete
+    	find ./var/generation/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/generation cleared!${NC}"
+    fi
+    
+    if [ -d "./var/view_preprocessed" ]; then
+    	find ./var/view_preprocessed/ -type f -not -name '.htaccess' -delete
+    	find ./var/view_preprocessed/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/view_preprocessed cleared!${NC}"
+    fi
+    
+    if [ -d "./generated" ]; then
+    	find ./generated/ -type f -not -name '.htaccess' -delete
+    	find ./generated/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/generated cleared!${NC}"
+    fi
+    
+    if [ -d "./pub/static" ]; then
+    	find ./pub/static/ -type f -not -name '.htaccess' -delete
+    	find ./pub/static/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}pub/static cleared!${NC}"
+    fi
+}
+
 function checkIsRunning {
 	IS_RUNNING=$(eval fin status | grep " Up ")
 	if [ -z "$IS_RUNNING" ]; then
@@ -323,7 +367,6 @@ function usage {
   echo -e " " "${GREEN}magento${NC}" "\t" "Executes Magento 2 command line tool (e.g: dsal magento setup:upgrade)"
   echo -e ""
   echo -e "Magento Actions:"
-  echo -e " " "${GREEN}static:clean${NC}" "\t" "Cleans the Magento static-content (only M2)"
   echo -e " " "${GREEN}config:url${NC}" "\t" "Set the Store URL and prepare the project for development"
   echo -e " " "${GREEN}c:c${NC}" "\t\t" "Clear cache, generation, view_preprocessed and static content"
   echo -e ""
@@ -374,13 +417,6 @@ case "$1" in
     fin exec "cd /var/www/${DOCROOT}; php bin/magento $* "
     ;;
 
-    static:clean)
-    shift 1
-    if [ -f bin/magento ]; then
-    	fin exec "rm -rf  ./generated var/cache var/generation var/view_preprocessed pub/static/*"
-    fi
-    ;;
-
     config:url)
     shift 1
     
@@ -395,48 +431,7 @@ case "$1" in
 
     c:c)
     shift 1
-    
-    if [ -d "./bin/magento" ] || [ -d "./app/Mage.php" ]; then
-    	echo -e "${RED}The current directory is not a Magento project${NC}"
-    	exit 1
-    fi
-
-    if [ -d "./var/cache" ]; then
-    	find ./var/cache/ -type f -not -name '.htaccess' -delete
-    	find ./var/cache/* -type d -print0 | xargs -0 rm -rf
-    	echo -e "${BLUE}var/cache cleared!${NC}"
-
-    fi
-    
-    if [ -d "./var/page_cache" ]; then
-    	find ./var/page_cache/ -type f -not -name '.htaccess' -delete
-    	find ./var/page_cache/* -type d -print0 | xargs -0 rm -rf
-    	echo -e "${BLUE}var/page_cache cleared!${NC}"
-    fi
-    
-    if [ -d "./var/generation" ]; then
-    	find ./var/generation/ -type f -not -name '.htaccess' -delete
-    	find ./var/generation/* -type d -print0 | xargs -0 rm -rf
-    	echo -e "${BLUE}var/generation cleared!${NC}"
-    fi
-    
-    if [ -d "./var/view_preprocessed" ]; then
-    	find ./var/view_preprocessed/ -type f -not -name '.htaccess' -delete
-    	find ./var/view_preprocessed/* -type d -print0 | xargs -0 rm -rf
-    	echo -e "${BLUE}var/view_preprocessed cleared!${NC}"
-    fi
-    
-    if [ -d "./generated" ]; then
-    	find ./generated/ -type f -not -name '.htaccess' -delete
-    	find ./generated/* -type d -print0 | xargs -0 rm -rf
-    	echo -e "${BLUE}var/generated cleared!${NC}"
-    fi
-    
-    if [ -d "./pub/static" ]; then
-    	find ./pub/static/ -type f -not -name '.htaccess' -delete
-    	find ./pub/static/* -type d -print0 | xargs -0 rm -rf
-    	echo -e "${BLUE}pub/static cleared!${NC}"
-    fi
+    clearCache
     ;;
 
     setup)
