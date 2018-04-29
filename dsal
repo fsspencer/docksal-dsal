@@ -49,13 +49,11 @@ function init {
 	
 	askDocroot
 
-	downloadN98
+	copyN98
 
 	if [ ! -d ".docksal" ]; then
 		echo -e "${BLUE}Downloading Docksal...${NC}"
-		git clone https://github.com/docksal/magento _docksal-magento &> /dev/null
-		cp -rf _docksal-magento/.docksal .  &> /dev/null
-		rm -rf _docksal-magento &> /dev/null
+		cp -rf ~/.dsal/docksal-magento/.docksal .  &> /dev/null
 		echo -e "${GREEN}Docksal downloaded!${NC}"
 		echo ""
 	fi
@@ -121,6 +119,17 @@ function downloadN98 {
 	else
 		curl -O https://files.magerun.net/n98-magerun.phar &> /dev/null
 		mv n98-magerun.phar ${DOCROOT}/n98
+	fi
+	echo -e "${GREEN}n98 downloaded!${NC}"
+	echo ""
+}
+
+function copyN98 {
+	echo -e "${BLUE}Downloading n98...${NC}"
+	if [ -f ${DOCROOT}/bin/magento ]; then
+		cp ~/.dsal/n98-magerun2.phar ${DOCROOT}/n98
+	else
+		cp ~/.dsal/n98-magerun.phar ${DOCROOT}/n98
 	fi
 	echo -e "${GREEN}n98 downloaded!${NC}"
 	echo ""
@@ -261,6 +270,21 @@ function setup {
 		rm -rf ~/.dsal/bin		
 		rm /usr/local/bin/dsal
 	fi
+
+	if [ ! -d ~/.dsal/docksal-magento ]; then
+		echo -e "${BLUE}Downloading Docksal Magento image...${NC}"
+		git clone https://github.com/docksal/magento ~/.dsal/docksal-magento &> /dev/null
+	fi
+	
+	CURDIR=$(eval pwd)
+	cd ~/.dsal/docksal-magento
+	echo -e "${BLUE}Pulling Docksal Magento latest version...${NC}"
+	git pull
+
+	cd $CURDIR
+
+	downloadN98
+
 	git clone https://github.com/fsspencer/docksal-dsal ~/.dsal/bin &> /dev/null
 	ln -s ~/.dsal/bin/dsal /usr/local/bin/dsal
 
@@ -362,7 +386,7 @@ case "$1" in
     askDocroot
 
     if [ ! -f ${DOCROOT}/n98 ]; then
-		downloadN98
+		copyN98
 	fi
     setDbValues
     ;;
