@@ -113,12 +113,13 @@ function askDocroot {
 
 function downloadN98 {
 	echo -e "${BLUE}Downloading n98...${NC}"
-	if [ -f ${DOCROOT}/bin/magento ]; then
+	if [ ! -f ~/.dsal/n98-magerun2.phar ]; then
 		curl -O https://files.magerun.net/n98-magerun2.phar &> /dev/null
-		mv n98-magerun2.phar ${DOCROOT}/n98
-	else
+		mv n98-magerun2.phar ~/.dsal/
+	fi
+	if [ ! -f ~/.dsal/n98-magerun.phar ]; then
 		curl -O https://files.magerun.net/n98-magerun.phar &> /dev/null
-		mv n98-magerun.phar ${DOCROOT}/n98
+		mv n98-magerun.phar ~/.dsal/
 	fi
 	echo -e "${GREEN}n98 downloaded!${NC}"
 	echo ""
