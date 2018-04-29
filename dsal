@@ -299,13 +299,14 @@ function usage {
   echo -e "Magento Actions:"
   echo -e " " "${GREEN}static:clean${NC}" "\t" "Cleans the Magento static-content (only M2)"
   echo -e " " "${GREEN}config:url${NC}" "\t" "Set the Store URL and prepare the project for development"
+  echo -e " " "${GREEN}c:c${NC}" "\t\t" "Clear cache, generation, view_preprocessed and static content"
   echo -e ""
   echo -e "System:"
   echo -e " " "${GREEN}setup${NC}" "\t" "Installs dsal command locally on your computer"
   echo -e " " "${GREEN}self-update${NC}" "\t" "Updates dsal locally on your computer"
   echo -e " " "${GREEN}permissions${NC}" "\t" "Restore file system permissions"
-  echo -e " " "${GREEN}xdebug:enable${NC}" "\t" "Enable xDebug"
-  echo -e " " "${GREEN}xdebug:disable${NC}" "\t" "Disable xDebug"
+  echo -e " " "${GREEN}xdebug:enable${NC}" "" "Enable xDebug"
+  echo -e " " "${GREEN}xdebug:disable${NC}" "Disable xDebug"
   echo -e ""
   echo ""
 }
@@ -364,6 +365,52 @@ case "$1" in
 		downloadN98
 	fi
     setDbValues
+    ;;
+
+    c:c)
+    shift 1
+    
+    if [ ! -d "./bin/magento" ] && [ ! -d "./app/Mage.php" ]; then
+    	echo -e "${RED}The current directory is not a Magento project${NC}"
+    	exit 1
+    fi
+
+    if [ -d "./var/cache" ]; then
+    	find ./var/cache/ -type f -not -name '.htaccess' -delete
+    	find ./var/cache/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/cache cleared!${NC}"
+
+    fi
+    
+    if [ -d "./var/page_cache" ]; then
+    	find ./var/page_cache/ -type f -not -name '.htaccess' -delete
+    	find ./var/page_cache/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/page_cache cleared!${NC}"
+    fi
+    
+    if [ -d "./var/generation" ]; then
+    	find ./var/generation/ -type f -not -name '.htaccess' -delete
+    	find ./var/generation/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/generation cleared!${NC}"
+    fi
+    
+    if [ -d "./var/view_preprocessed" ]; then
+    	find ./var/view_preprocessed/ -type f -not -name '.htaccess' -delete
+    	find ./var/view_preprocessed/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/view_preprocessed cleared!${NC}"
+    fi
+    
+    if [ -d "./generated" ]; then
+    	find ./generated/ -type f -not -name '.htaccess' -delete
+    	find ./generated/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}var/generated cleared!${NC}"
+    fi
+    
+    if [ -d "./pub/static" ]; then
+    	find ./pub/static/ -type f -not -name '.htaccess' -delete
+    	find ./pub/static/* -type d -print0 | xargs -0 rm -rf
+    	echo -e "${BLUE}pub/static cleared!${NC}"
+    fi
     ;;
 
     setup)
