@@ -112,17 +112,18 @@ function askDocroot {
 }
 
 function downloadN98 {
-	echo -e "${BLUE}Downloading n98...${NC}"
-	if [ ! -f ~/.dsal/n98-magerun2.phar ]; then
-		curl -O https://files.magerun.net/n98-magerun2.phar &> /dev/null
-		mv n98-magerun2.phar ~/.dsal/
-	fi
 	if [ ! -f ~/.dsal/n98-magerun.phar ]; then
+		echo -e "${BLUE}Downloading n98-magerun.phar...${NC}"
 		curl -O https://files.magerun.net/n98-magerun.phar &> /dev/null
 		mv n98-magerun.phar ~/.dsal/
+		echo -e "${GREEN}n98-magerun.phar downloaded!${NC}"
 	fi
-	echo -e "${GREEN}n98 downloaded!${NC}"
-	echo ""
+	if [ ! -f ~/.dsal/n98-magerun2.phar ]; then
+		echo -e "${BLUE}Downloading n98-magerun2.phar...${NC}"
+		curl -O https://files.magerun.net/n98-magerun2.phar &> /dev/null
+		mv n98-magerun2.phar ~/.dsal/
+		echo -e "${GREEN}n98-magerun2.phar downloaded!${NC}"
+	fi
 }
 
 function copyN98 {
