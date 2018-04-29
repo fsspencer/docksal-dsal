@@ -15,7 +15,13 @@ if [ -z $(eval command -v fin) ]; then
 	exit 1
 fi
 
-
+if [ -d ".docksal/" ]; then
+	DOCROOT=$(grep DOCROOT .docksal/docksal.env | xargs)
+	DOCROOT=${DOCROOT#*=}
+elif [ -d "../.docksal" ]; then
+	DOCROOT=$(grep DOCROOT ../.docksal/docksal.env | xargs)
+	DOCROOT=${DOCROOT#*=}
+fi
 
 ######################################################
 ####		 Functions
@@ -98,11 +104,13 @@ function askProjectName {
 }
 
 function askDocroot {
-	read -p "Doc Root (docroot): " DOCROOT
 	if [ -z "$DOCROOT" ]; then
-		DOCROOT="docroot"
+		read -p "Doc Root (docroot): " DOCROOT
+		if [ -z "$DOCROOT" ]; then
+			DOCROOT="docroot"
+		fi
+		echo ""
 	fi
-	echo ""
 }
 
 function downloadN98 {
@@ -257,6 +265,14 @@ function setup {
 	ln -s ~/.dsal/bin/dsal /usr/local/bin/dsal
 
 	echo -e "${GREEN}DSAL installed properly. Now you can use it as 'dsal' in your terminal${NC}"
+}
+
+function checkIsRunning {
+	IS_RUNNING=$(eval fin status | grep " Up ")
+	if [ -z "$IS_RUNNING" ]; then
+		echo -e "${RED}Project is not running. Please run: fin up${NC}"
+		exit 1
+	fi
 }
 
 
