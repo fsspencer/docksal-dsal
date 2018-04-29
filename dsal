@@ -394,7 +394,7 @@ case "$1" in
     c:c)
     shift 1
     
-    if [ ! -d "./bin/magento" ] && [ ! -d "./app/Mage.php" ]; then
+    if [ -d "./bin/magento" ] || [ -d "./app/Mage.php" ]; then
     	echo -e "${RED}The current directory is not a Magento project${NC}"
     	exit 1
     fi
