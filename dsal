@@ -216,6 +216,8 @@ function setDbValues {
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/base_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/base_link_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/cookie/cookie_domain ${BASEURL}"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/use_in_frontend 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/use_in_adminhtml 0"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/js/merge_files 0"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/js/enable_js_bundling 0"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/js/minify_files 0"
