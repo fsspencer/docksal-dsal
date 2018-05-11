@@ -225,7 +225,7 @@ function setDbValues {
 	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "catalog/frontend/flat_%";' &> null
 	echo -e "${GREEN}Flat Catalog disabled${NC}"
 
-	if [ -f ${DOCROOT}/bin/magento ]; then
+	if [ -f ${DOCROOT}/bin/magento ] || [ -f ./bin/magento ]; then
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/unsecure/base_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/unsecure/base_link_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/base_url http://${BASEURL}/"
