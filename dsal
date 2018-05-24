@@ -215,19 +215,19 @@ function importDb {
 
 function setDbValues {
 	echo -e "${BLUE}\nSetting DB values...${NC}"
-	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%/base_%" AND value LIKE "http%" AND scope_id > 0;' &> null
+	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%/base_%" AND value LIKE "http%" AND scope_id > 0;' &> /dev/null
 	echo -e "${GREEN}Extra stores URLs removed${NC}"
 	
-	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%dev/js/%" OR path LIKE "%dev/css/%" OR path LIKE "%dev/static/%" OR;' &> null
+	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%dev/js/%" OR path LIKE "%dev/css/%" OR path LIKE "%dev/static/%" OR;' &> /dev/null
 	echo -e "${GREEN}Merge/Minify/Bundling disabled${NC}"
 
-	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "web/secure/use_in%";' &> null
+	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "web/secure/use_in%";' &> /dev/null
 	echo -e "${GREEN}Secure URLs disabled${NC}"
 
-	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "web/cookie/cookie_domain%";' &> null
+	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "web/cookie/cookie_domain%";' &> /dev/null
 	echo -e "${GREEN}Cookie Domain removed${NC}"
 
-	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "catalog/frontend/flat_%";' &> null
+	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "catalog/frontend/flat_%";' &> /dev/null
 	echo -e "${GREEN}Flat Catalog disabled${NC}"
 
 	if [ -f ${DOCROOT}/bin/magento ] || [ -f ./bin/magento ]; then
