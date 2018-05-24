@@ -23,16 +23,24 @@ elif [ -d "../.docksal" ]; then
 	DOCROOT=${DOCROOT#*=}
 fi
 
+if [ ! -z $(eval find . -name Mage.php -print) ]; then
+	MVERSION="1"
+else
+	MVERSION="2"
+fi
+
 ######################################################
 ####		 Functions
 ######################################################
 
 function init {
 
-	read -p "Magento Version [1 or 2]: " MVERSION
 	if [ -z "$MVERSION" ]; then
-		MVERSION="2"
-		echo "Selected Magento 2";
+		read -p "Magento Version [1 or 2]: " MVERSION
+		if [ -z "$MVERSION" ]; then
+			MVERSION="2"
+			echo "Selected Magento 2";
+		fi
 	fi
 
 	read -p "Magento Type [ce/ee]: " MAGE_TYPE
@@ -128,11 +136,8 @@ function downloadN98 {
 
 function copyN98 {
 	echo -e "${BLUE}Downloading n98...${NC}"
-	if [ -f ${DOCROOT}/bin/magento ]; then
-		cp ~/.dsal/n98-magerun2.phar ${DOCROOT}/n98
-	else
-		cp ~/.dsal/n98-magerun.phar ${DOCROOT}/n98
-	fi
+	cp ~/.dsal/n98-magerun${MVERSION}.phar ${DOCROOT}/n98
+	chmod +x ${DOCROOT}
 	echo -e "${GREEN}n98 downloaded!${NC}"
 	echo ""
 }
