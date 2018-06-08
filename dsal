@@ -93,6 +93,7 @@ function init {
 	echo ""
 
 	fin up
+	fin addon install mailhog
 
 	if [ "$MVERSION" -eq "2" ]; then
 		fin exec "cd /var/www/${DOCROOT}; composer install"
