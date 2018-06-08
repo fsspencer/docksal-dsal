@@ -124,7 +124,7 @@ function downloadN98 {
 	if [ ! -f ~/.dsal/n98-magerun.phar ]; then
 		echo -e "${BLUE}Downloading n98-magerun.phar...${NC}"
 		curl -O https://files.magerun.net/n98-magerun.phar &> /dev/null
-		mv n98-magerun.phar ~/.dsal/
+		mv n98-magerun.phar ~/.dsal/n98-magerun1.phar 
 		echo -e "${GREEN}n98-magerun.phar downloaded!${NC}"
 	fi
 	if [ ! -f ~/.dsal/n98-magerun2.phar ]; then
