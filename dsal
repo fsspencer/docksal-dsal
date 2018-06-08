@@ -121,7 +121,7 @@ function askDocroot {
 }
 
 function downloadN98 {
-	if [ ! -f ~/.dsal/n98-magerun.phar ]; then
+	if [ ! -f ~/.dsal/n98-magerun1.phar ]; then
 		echo -e "${BLUE}Downloading n98-magerun.phar...${NC}"
 		curl -O https://files.magerun.net/n98-magerun.phar &> /dev/null
 		mv n98-magerun.phar ~/.dsal/n98-magerun1.phar 
