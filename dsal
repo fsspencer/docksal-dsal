@@ -18,9 +18,11 @@ fi
 if [ -d ".docksal/" ]; then
 	DOCROOT=$(grep DOCROOT .docksal/docksal.env | xargs)
 	DOCROOT=${DOCROOT#*=}
+	DOCROOT_LOCAL_PATH=$(eval pwd)/${DOCROOT}
 elif [ -d "../.docksal" ]; then
 	DOCROOT=$(grep DOCROOT ../.docksal/docksal.env | xargs)
 	DOCROOT=${DOCROOT#*=}
+	DOCROOT_LOCAL_PATH=$(eval cd .. && pwd)/${DOCROOT}
 fi
 
 if [ ! -z $(eval find . -name Mage.php -print) ]; then
@@ -137,8 +139,8 @@ function downloadN98 {
 
 function copyN98 {
 	echo -e "${BLUE}Downloading n98...${NC}"
-	cp ~/.dsal/n98-magerun${MVERSION}.phar ${DOCROOT}/n98
-	chmod +x ${DOCROOT}
+	cp ~/.dsal/n98-magerun${MVERSION}.phar ${DOCROOT_LOCAL_PATH}/n98
+	chmod +x ${DOCROOT_LOCAL_PATH}/n98
 	echo -e "${GREEN}n98 downloaded!${NC}"
 	echo ""
 }
@@ -314,40 +316,40 @@ function clearCache {
     	exit 1
     fi
 
-    if [ -d "./var/cache" ]; then
-    	find ./var/cache/ -type f -not -name '.htaccess' -delete
-    	find ./var/cache/* -type d -print0 | xargs -0 rm -rf
+    if [ -d "${DOCROOT_LOCAL_PATH}/var/cache" ]; then
+    	find ${DOCROOT_LOCAL_PATH}/var/cache/ -type f -not -name '.htaccess' -delete
+    	find ${DOCROOT_LOCAL_PATH}/var/cache/* -type d -print0 | xargs -0 rm -rf
     	echo -e "${BLUE}var/cache cleared!${NC}"
 
     fi
     
-    if [ -d "./var/page_cache" ]; then
-    	find ./var/page_cache/ -type f -not -name '.htaccess' -delete
-    	find ./var/page_cache/* -type d -print0 | xargs -0 rm -rf
+    if [ -d "${DOCROOT_LOCAL_PATH}/var/page_cache" ]; then
+    	find ${DOCROOT_LOCAL_PATH}/var/page_cache/ -type f -not -name '.htaccess' -delete
+    	find ${DOCROOT_LOCAL_PATH}/var/page_cache/* -type d -print0 | xargs -0 rm -rf
     	echo -e "${BLUE}var/page_cache cleared!${NC}"
     fi
     
-    if [ -d "./var/generation" ]; then
-    	find ./var/generation/ -type f -not -name '.htaccess' -delete
-    	find ./var/generation/* -type d -print0 | xargs -0 rm -rf
+    if [ -d "${DOCROOT_LOCAL_PATH}/var/generation" ]; then
+    	find ${DOCROOT_LOCAL_PATH}/var/generation/ -type f -not -name '.htaccess' -delete
+    	find ${DOCROOT_LOCAL_PATH}/var/generation/* -type d -print0 | xargs -0 rm -rf
     	echo -e "${BLUE}var/generation cleared!${NC}"
     fi
     
-    if [ -d "./var/view_preprocessed" ]; then
+    if [ -d "${DOCROOT_LOCAL_PATH}/var/view_preprocessed" ]; then
     	find ./var/view_preprocessed/ -type f -not -name '.htaccess' -delete
     	find ./var/view_preprocessed/* -type d -print0 | xargs -0 rm -rf
     	echo -e "${BLUE}var/view_preprocessed cleared!${NC}"
     fi
     
-    if [ -d "./generated" ]; then
-    	find ./generated/ -type f -not -name '.htaccess' -delete
-    	find ./generated/* -type d -print0 | xargs -0 rm -rf
+    if [ -d "${DOCROOT_LOCAL_PATH}/generated" ]; then
+    	find ${DOCROOT_LOCAL_PATH}/generated/ -type f -not -name '.htaccess' -delete
+    	find ${DOCROOT_LOCAL_PATH}/generated/* -type d -print0 | xargs -0 rm -rf
     	echo -e "${BLUE}var/generated cleared!${NC}"
     fi
     
-    if [ -d "./pub/static" ]; then
-    	find ./pub/static/ -type f -not -name '.htaccess' -delete
-    	find ./pub/static/* -type d -print0 | xargs -0 rm -rf
+    if [ -d "${DOCROOT_LOCAL_PATH}/pub/static" ]; then
+    	find ${DOCROOT_LOCAL_PATH}/pub/static/ -type f -not -name '.htaccess' -delete
+    	find ${DOCROOT_LOCAL_PATH}/pub/static/* -type d -print0 | xargs -0 rm -rf
     	echo -e "${BLUE}pub/static cleared!${NC}"
     fi
 }
@@ -411,25 +413,25 @@ case "$1" in
     php)
     shift 1
     checkIsRunning
-    fin exec "cd /var/www/${DOCROOT}; php $* "
+    fin exec 'cd /var/www/${DOCROOT}; php $* '
     ;;
 
     composer)
     shift 1
     checkIsRunning
-    fin exec "cd /var/www/${DOCROOT}; composer $* "
+    fin exec 'cd /var/www/${DOCROOT}; composer $* '
     ;;
 
     n98)
     shift 1
     checkIsRunning
-    fin exec "cd /var/www/${DOCROOT}; php n98 $* "
+    fin exec 'cd /var/www/${DOCROOT}; php n98 $* '
     ;;
 
     magento)
     shift 1
     checkIsRunning
-    fin exec "cd /var/www/${DOCROOT}; php bin/magento $* "
+    fin exec 'cd /var/www/${DOCROOT}; php bin/magento $* '
     ;;
 
     config:url)
@@ -438,7 +440,7 @@ case "$1" in
     askProjectName
     askDocroot
 
-    if [ ! -f ${DOCROOT}/n98 ]; then
+    if [ ! -f ${DOCROOT_LOCAL_PATH}/n98 ]; then
 		copyN98
 	fi
     setDbValues
