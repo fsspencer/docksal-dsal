@@ -413,25 +413,25 @@ case "$1" in
     php)
     shift 1
     checkIsRunning
-    fin exec 'cd /var/www/${DOCROOT}; php $* '
+    fin exec "cd /var/www/${DOCROOT}; php $* "
     ;;
 
     composer)
     shift 1
     checkIsRunning
-    fin exec 'cd /var/www/${DOCROOT}; composer $* '
+    fin exec "cd /var/www/${DOCROOT}; composer $* "
     ;;
 
     n98)
     shift 1
     checkIsRunning
-    fin exec 'cd /var/www/${DOCROOT}; php n98 $* '
+    fin exec "cd /var/www/${DOCROOT}; php n98 $* "
     ;;
 
     magento)
     shift 1
     checkIsRunning
-    fin exec 'cd /var/www/${DOCROOT}; php bin/magento $* '
+    fin exec "cd /var/www/${DOCROOT}; php bin/magento $* "
     ;;
 
     config:url)
