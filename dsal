@@ -221,7 +221,7 @@ function setDbValues {
 	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%/base_%" AND value LIKE "http%" AND scope_id > 0;' &> /dev/null
 	echo -e "${GREEN}Extra stores URLs removed${NC}"
 	
-	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%dev/js/%" OR path LIKE "%dev/css/%" OR path LIKE "%dev/static/%" OR;' &> /dev/null
+	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%dev/js/%" OR path LIKE "%dev/css/%";' &> /dev/null
 	echo -e "${GREEN}Merge/Minify/Bundling disabled${NC}"
 
 	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "web/secure/use_in%";' &> /dev/null
@@ -239,6 +239,8 @@ function setDbValues {
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/base_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/base_link_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/cookie/cookie_domain ${BASEURL}"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set admin/security/use_form_key 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/static/sign 0"
 		
 		fin exec "cd /var/www/${DOCROOT}; php bin/magento setup:upgrade"
 		fin exec "cd /var/www/${DOCROOT}; php bin/magento cache:enable"
