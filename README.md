@@ -48,6 +48,7 @@ Actions:
 | **permissions** | *Resote magento file system permissions* |
 | **xdebug:enable** | *Enable xDebug* |
 | **xdebug:disable** | *Disable xDebug* |
+| **ioncube:install** | *Install ionCube* |
 
 
 **NOTE:** All of this commands will work only for your project root directory. That means that if you want to use, for example, gulp on a specify directory within project project (e.g.: skin/frontend/myvendor/mytheme/) it won't work. In that case, you will need to use the "fin bash" command and navigate to that directory and use the gulp command from that place.

@@ -312,6 +312,22 @@ function setup {
 	echo -e "${GREEN}DSAL installed properly. Now you can use it as 'dsal' in your terminal${NC}"
 }
 
+function ioncube {
+	if [ "$MVERSION" -eq "1" ]; then
+		IONCUBE_VERSION="5.6"
+	else
+		IONCUBE_VERSION="7.0"
+	fi
+	echo -e "${BLUE}Downloading and installing ioncube ${IONCUBE_VERSION}... ${NC}"
+	fin exec 'cd /tmp \
+		&& sudo curl -o ioncube.tar.gz http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz &> /dev/null \
+	    && sudo tar -xzf ioncube.tar.gz \
+	    && sudo mv ioncube/ioncube_loader_lin_${IONCUBE_VERSION}.so /usr/local/lib/php/extensions/* \
+	    && sudo rm -Rf ioncube.tar.gz ioncube \
+	    && sudo echo "zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_${IONCUBE_VERSION}.so" > 00_docker-php-ext-ioncube_loader_lin_${IONCUBE_VERSION}.ini \
+	    && sudo mv 00_docker-php-ext-ioncube_loader_lin_${IONCUBE_VERSION}.ini /usr/local/etc/php/conf.d/'
+}
+
 function clearCache {
 	if [ -d "./bin/magento" ] || [ -d "./app/Mage.php" ]; then
     	echo -e "${RED}The current directory is not a Magento project${NC}"
@@ -395,6 +411,7 @@ function usage {
   echo -e " " "${GREEN}permissions${NC}" "\t" "Restore file system permissions"
   echo -e " " "${GREEN}xdebug:enable${NC}" "" "Enable xDebug"
   echo -e " " "${GREEN}xdebug:disable${NC}" "Disable xDebug"
+  echo -e " " "${GREEN}ioncube:install${NC}" "Install ioncube"
   echo -e ""
   echo ""
 }
@@ -486,6 +503,12 @@ case "$1" in
 	fi
 	fin restart
 	echo -e "${GREEN}xDebug disabled!${NC}"
+    ;;
+
+    ioncube:install)
+    ioncube
+    fin restart
+	echo -e "${GREEN}ionCube installed!${NC}"
     ;;
 
     *)
