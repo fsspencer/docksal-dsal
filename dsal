@@ -462,9 +462,9 @@ case "$1" in
     	exit 1
     fi
     if [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/unit/phpunit.xml ]; then
-    	fin exec "php /var/www/${DOCROOT} vendor/bin/phpunit -c /var/www/${DOCROOT}/dev/tests/unit/phpunit.xml $* "
+    	fin exec "php /var/www/${DOCROOT}/vendor/bin/phpunit -c /var/www/${DOCROOT}/dev/tests/unit/phpunit.xml $* "
     elif [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/unit/phpunit.xml.dist ]; then
-    	fin exec "php /var/www/${DOCROOT} vendor/bin/phpunit -c /var/www/${DOCROOT}/dev/tests/unit/phpunit.xml $* "
+    	fin exec "php /var/www/${DOCROOT}/vendor/bin/phpunit -c /var/www/${DOCROOT}/dev/tests/unit/phpunit.xml $* "
 	else
 		echo -e "${RED}PHPUnit config parameters could  not be found in ${DOCROOT_LOCAL_PATH}/dev/tests/unit/phpunit.xml.dist ...${NC}"
     	exit 1	
