@@ -39,6 +39,7 @@ Actions:
 | **npm** | *Executes npm within your project root* |
 | **n98** | *Executes n98-magerun within your project root* |
 | **magento** | *Executes Magento 2 command line tool (e.g: dsal magento setup:upgrade)* |
+| **phpunit** | *Executes Magento 2 PHPUnit using executable file located in vendor/bin* |
 ||
 | **static:clean** | *Cleans static-content (only for M2)* |
 | **config:url** | *Set the store URL and prepare the project for development* |

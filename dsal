@@ -400,6 +400,7 @@ function usage {
   echo -e " " "${GREEN}npm${NC}" "\t\t" "Executes npm within your project root"
   echo -e " " "${GREEN}n98${NC}" "\t\t" "Executes n98-magerun within your project root"
   echo -e " " "${GREEN}magento${NC}" "\t" "Executes Magento 2 command line tool (e.g: dsal magento setup:upgrade)"
+  echo -e " " "${GREEN}phpunit${NC}" "\t" "Executes Magento 2 PHPUnit using executable file located in vendor/bin"
   echo -e ""
   echo -e "Magento Actions:"
   echo -e " " "${GREEN}config:url${NC}" "\t" "Set the Store URL and prepare the project for development"
@@ -451,6 +452,23 @@ case "$1" in
     shift 1
     checkIsRunning
     fin exec "cd /var/www/${DOCROOT}; php bin/magento $* "
+    ;;
+
+    phpunit)
+    shift 1
+    checkIsRunning
+    if [ ! -f ${DOCROOT_LOCAL_PATH}/vendor/bin/phpunit ]; then
+    	echo -e "${RED}PHPUnit not found on vendor/bin/...${NC}"
+    	exit 1
+    fi
+    if [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/unit/phpunit.xml ]; then
+    	fin exec "php /var/www/${DOCROOT} vendor/bin/phpunit -c /var/www/${DOCROOT}/dev/tests/unit/phpunit.xml $* "
+    elif [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/unit/phpunit.xml.dist ]; then
+    	fin exec "php /var/www/${DOCROOT} vendor/bin/phpunit -c /var/www/${DOCROOT}/dev/tests/unit/phpunit.xml $* "
+	else
+		echo -e "${RED}PHPUnit config parameters could  not be found in ${DOCROOT_LOCAL_PATH}/dev/tests/unit/phpunit.xml.dist ...${NC}"
+    	exit 1	
+    fi
     ;;
 
     config:url)
