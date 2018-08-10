@@ -469,8 +469,13 @@ case "$1" in
     	TEST_TYPE="unit"
     fi
 
+    THIRD_ARG=""
+    if [ ! -z "$3" ]; then
+    	THIRD_ARG='"'$3'"'
+    fi
+
     if [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/${TEST_TYPE}/phpunit.xml ] || [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/${TEST_TYPE}/phpunit.xml.dist ]; then
-    	fin exec "cd /var/www/${DOCROOT}/dev/tests/${TEST_TYPE}/; php /var/www/${DOCROOT}/vendor/bin/phpunit ${@:2} "
+    	fin exec "cd /var/www/${DOCROOT}/dev/tests/${TEST_TYPE}/; php /var/www/${DOCROOT}/vendor/bin/phpunit $2 $THIRD_ARG "
 	else
 		echo -e "${RED}PHPUnit config parameters could not be found in ${DOCROOT_LOCAL_PATH}/dev/tests/${TEST_TYPE}/phpunit.xml.dist ...${NC}"
     	exit 1	
