@@ -457,16 +457,22 @@ case "$1" in
     phpunit)
     shift 1
     checkIsRunning
+
     if [ ! -f ${DOCROOT_LOCAL_PATH}/vendor/bin/phpunit ]; then
     	echo -e "${RED}PHPUnit not found on vendor/bin/...${NC}"
     	exit 1
     fi
-    if [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/unit/phpunit.xml ]; then
-    	fin exec "php /var/www/${DOCROOT}/vendor/bin/phpunit -c /var/www/${DOCROOT}/dev/tests/unit/phpunit.xml $* "
-    elif [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/unit/phpunit.xml.dist ]; then
-    	fin exec "php /var/www/${DOCROOT}/vendor/bin/phpunit -c /var/www/${DOCROOT}/dev/tests/unit/phpunit.xml.dist $* "
+
+    if [ "$1" = "integration" ]; then
+    	TEST_TYPE="integration"
+    else
+    	TEST_TYPE="unit"
+    fi
+
+    if [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/${TEST_TYPE}/phpunit.xml ] || [ -f ${DOCROOT_LOCAL_PATH}/dev/tests/${TEST_TYPE}/phpunit.xml.dist ]; then
+    	fin exec "cd /var/www/${DOCROOT}/dev/tests/${TEST_TYPE}/; php /var/www/${DOCROOT}/vendor/bin/phpunit ${@:2} "
 	else
-		echo -e "${RED}PHPUnit config parameters could  not be found in ${DOCROOT_LOCAL_PATH}/dev/tests/unit/phpunit.xml.dist ...${NC}"
+		echo -e "${RED}PHPUnit config parameters could not be found in ${DOCROOT_LOCAL_PATH}/dev/tests/${TEST_TYPE}/phpunit.xml.dist ...${NC}"
     	exit 1	
     fi
     ;;
