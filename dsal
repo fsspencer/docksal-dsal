@@ -313,19 +313,24 @@ function setup {
 }
 
 function ioncube {
-	if [ "$MVERSION" -eq "1" ]; then
-		IONCUBE_VERSION="5.6"
-	else
-		IONCUBE_VERSION="7.0"
-	fi
 	echo -e "${BLUE}Downloading and installing ioncube ${IONCUBE_VERSION}... ${NC}"
-	fin exec "cd /tmp \
-		&& sudo curl -o ioncube.tar.gz http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz &> /dev/null \
-	    && sudo tar -xzf ioncube.tar.gz \
-	    && sudo mv ioncube/ioncube_loader_lin_${IONCUBE_VERSION}.so /usr/local/lib/php/extensions/* \
-	    && sudo rm -Rf ioncube.tar.gz ioncube \
-	    && sudo echo 'zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_${IONCUBE_VERSION}.so' > 00_docker-php-ext-ioncube_loader_lin_${IONCUBE_VERSION}.ini \
-	    && sudo mv 00_docker-php-ext-ioncube_loader_lin_${IONCUBE_VERSION}.ini /usr/local/etc/php/conf.d/"
+	if [ "$MVERSION" -eq "1" ]; then	
+		fin exec "cd /tmp \
+			&& sudo curl -o ioncube.tar.gz http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz &> /dev/null \
+		    && sudo tar -xzf ioncube.tar.gz \
+		    && sudo mv ioncube/ioncube_loader_lin_5.6.so /usr/local/lib/php/extensions/* \
+		    && sudo rm -Rf ioncube.tar.gz ioncube \
+		    && sudo echo 'zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_5.6.so' > 00_docker-php-ext-ioncube_loader_lin_5.6.ini \
+		    && sudo mv 00_docker-php-ext-ioncube_loader_lin_5.6.ini /usr/local/etc/php/conf.d/"
+	else
+		fin exec "cd /tmp \
+			&& sudo curl -o ioncube.tar.gz http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz &> /dev/null \
+		    && sudo tar -xzf ioncube.tar.gz \
+		    && sudo mv ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/* \
+		    && sudo rm -Rf ioncube.tar.gz ioncube \
+		    && sudo echo 'zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/ioncube_loader_lin_7.0.so' > 00_docker-php-ext-ioncube_loader_lin_7.0.ini \
+		    && sudo mv 00_docker-php-ext-ioncube_loader_lin_7.0.ini /usr/local/etc/php/conf.d/"
+	fi
 }
 
 function clearCache {
