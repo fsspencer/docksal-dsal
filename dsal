@@ -321,17 +321,17 @@ function ioncube {
 		fin exec "cd /tmp \
 			&& sudo curl -o ioncube.tar.gz http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz &> /dev/null \
 		    && sudo tar -xzf ioncube.tar.gz \
-		    && sudo mv ioncube/ioncube_loader_lin_5.6.so /usr/local/lib/php/extensions/* \
+		    && sudo mv ioncube/ioncube_loader_lin_5.6.so /usr/local/lib/php/extensions/ \
 		    && sudo rm -Rf ioncube.tar.gz ioncube \
-		    && sudo echo 'zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20131226/ioncube_loader_lin_5.6.so' > 00_docker-php-ext-ioncube_loader_lin_5.6.ini \
+		    && sudo echo 'zend_extension=/usr/local/lib/php/extensions/ioncube_loader_lin_5.6.so' > 00_docker-php-ext-ioncube_loader_lin_5.6.ini \
 		    && sudo mv 00_docker-php-ext-ioncube_loader_lin_5.6.ini /usr/local/etc/php/conf.d/"
 	else
 		fin exec "cd /tmp \
 			&& sudo curl -o ioncube.tar.gz http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz &> /dev/null \
 		    && sudo tar -xzf ioncube.tar.gz \
-		    && sudo mv ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/* \
+		    && sudo mv ioncube/ioncube_loader_lin_7.0.so /usr/local/lib/php/extensions/ \
 		    && sudo rm -Rf ioncube.tar.gz ioncube \
-		    && sudo echo 'zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20131226/ioncube_loader_lin_7.0.so' > 00_docker-php-ext-ioncube_loader_lin_7.0.ini \
+		    && sudo echo 'zend_extension=/usr/local/lib/php/extensions/ioncube_loader_lin_7.0.so' > 00_docker-php-ext-ioncube_loader_lin_7.0.ini \
 		    && sudo mv 00_docker-php-ext-ioncube_loader_lin_7.0.ini /usr/local/etc/php/conf.d/"
 	fi
 }
