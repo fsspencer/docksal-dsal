@@ -239,6 +239,9 @@ function setDbValues {
 	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%base_url%";' &> /dev/null
 	echo -e "${GREEN}Stores URLS removed${NC}"
 
+	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "smtp/module/%";' &> /dev/null
+	echo -e "${GREEN}SMTP parameters removed${NC}"
+
 	if [ -f ${DOCROOT}/bin/magento ] || [ -f ./bin/magento ]; then
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/unsecure/base_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/unsecure/base_link_url http://${BASEURL}/"
