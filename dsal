@@ -245,7 +245,8 @@ function setDbValues {
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/base_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/secure/base_link_url http://${BASEURL}/"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/cookie/cookie_domain ${BASEURL}"
-		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set admin/security/use_form_key 0"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/cookie/cookie_domain ${BASEURL}"
+		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set web/url/use_store 1"
 		fin exec "cd /var/www/${DOCROOT}; php n98 config:store:set dev/static/sign 0"
 		
 		fin exec "cd /var/www/${DOCROOT}; php bin/magento setup:upgrade"
