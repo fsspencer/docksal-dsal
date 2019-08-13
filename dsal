@@ -343,6 +343,7 @@ function ioncube {
 		    && sudo echo 'zend_extension=/usr/local/lib/php/extensions/ioncube_loader_lin_7.0.so' > 00_docker-php-ext-ioncube_loader_lin_7.0.ini \
 		    && sudo mv 00_docker-php-ext-ioncube_loader_lin_7.0.ini /usr/local/etc/php/conf.d/"
 	fi
+	fin restart &> /dev/null
 }
 
 function clearCache {
