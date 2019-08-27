@@ -239,7 +239,7 @@ function setDbValues {
 	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%base_url%";' &> /dev/null
 	echo -e "${GREEN}Stores URLS removed${NC}"
 
-	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "smtp/module/%";' &> /dev/null
+	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "%smtp%";' &> /dev/null
 	echo -e "${GREEN}SMTP parameters removed${NC}"
 
 	fin db cli --db=default 'DELETE FROM core_config_data WHERE path LIKE "catalog/search/%";' &> /dev/null
