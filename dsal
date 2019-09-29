@@ -451,25 +451,25 @@ case "$1" in
     php)
     shift 1
     checkIsRunning
-    fin exec "cd /var/www/${DOCROOT}; php $* "
+    fin exec "cd /var/www/${DOCROOT}; /usr/local/bin/php -d memory_limit=-1 $* "
     ;;
 
     composer)
     shift 1
     checkIsRunning
-    fin exec "cd /var/www/${DOCROOT}; composer $* "
+    fin exec "cd /var/www/${DOCROOT}; /usr/local/bin/php -d memory_limit=-1 /usr/local/bin/composer $* "
     ;;
 
     n98)
     shift 1
     checkIsRunning
-    fin exec "cd /var/www/${DOCROOT}; php n98 $* "
+    fin exec "cd /var/www/${DOCROOT}; /usr/local/bin/php -d memory_limit=-1 n98 $* "
     ;;
 
     magento)
     shift 1
     checkIsRunning
-    fin exec "cd /var/www/${DOCROOT}; php bin/magento $* "
+    fin exec "cd /var/www/${DOCROOT}; php -d memory_limit=-1 bin/magento $* "
     ;;
 
     phpunit)
